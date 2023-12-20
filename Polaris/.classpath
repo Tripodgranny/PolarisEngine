@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/joml-1.10.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/joml-1.10.5-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/joml-1.10.5-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-assimp.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-assimp-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-assimp-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-assimp-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-bgfx.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-bgfx-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-bgfx-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-bgfx-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-glfw.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-glfw-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-glfw-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nanovg.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nanovg-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nanovg-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nanovg-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nfd.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nfd-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nfd-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nfd-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nuklear.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nuklear-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nuklear-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-nuklear-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-openal.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-openal-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-openal-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-openal-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-opengl.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-opengl-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-opengl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-opengl-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-par.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-par-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-par-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-par-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-stb.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-stb-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-stb-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/lwjgl-stb-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Chris/Documents/GitHub/Polaris/LWJGL 3 Jars/PNGDecoder.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

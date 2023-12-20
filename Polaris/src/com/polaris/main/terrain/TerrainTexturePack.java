@@ -1,0 +1,34 @@
+package com.polaris.main.terrain;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.polaris.main.components.Texture;
+
+// CURRENTLY UNUSED BUT MIGHT BE USED...
+public class TerrainTexturePack {
+	
+	private List<Texture> textures;
+	private Texture backgroundTexture;
+	private Texture rTexture;
+	private Texture gTexture;
+	private Texture bTexture;
+	
+	public TerrainTexturePack(Texture backgroundTexture, Texture rTexture,
+			Texture gTexture, Texture bTexture) { 
+		this.backgroundTexture = backgroundTexture;
+		this.rTexture = rTexture;
+		this.gTexture = gTexture;
+		this.bTexture = bTexture;
+		this.textures = new ArrayList<>();
+		this.textures.add(backgroundTexture);
+		this.textures.add(gTexture);
+		this.textures.add(bTexture);
+		this.textures.add(gTexture);
+	}
+	
+	public List<Texture> getTextures() {
+		return textures;
+	}
+	
+}

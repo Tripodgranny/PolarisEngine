@@ -1,0 +1,110 @@
+package com.polaris.main.camera;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+
+import com.polaris.main.EngineManager;
+import com.polaris.main.utils.Constants;
+
+public class Camera {
+	
+	private static final float CAMERA_MOVE_SPEED = 40f;
+	
+	private Vector3f position, rotation;
+	private Vector3f cameraInc;
+	
+	
+	public Camera() { 
+		position = new Vector3f(0,0,0);
+		rotation = new Vector3f(0,0,0);
+		cameraInc = new Vector3f(0,0,0);
+	}
+	
+	public Camera(Vector3f position) { 
+		this.position = position;
+		rotation = new Vector3f(0,0,0);
+	}
+	
+	public Camera(Vector3f position, Vector3f rotation) {
+		this.position = position;
+		this.rotation = rotation;
+	}
+	
+	public void update(float interval) {
+		cameraInc.set(0,0,0);
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_W))
+			cameraInc.z = -1;
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_S))
+			cameraInc.z = 1;
+		
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_A))
+			cameraInc.x = -1;
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_D))
+			cameraInc.x = 1;
+		
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_E))
+			cameraInc.y = -1;
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_Q))
+			cameraInc.y = 1;
+		
+		// camera
+		translate(cameraInc.x * CAMERA_MOVE_SPEED * (interval),
+				  cameraInc.y * CAMERA_MOVE_SPEED * (interval),
+				  cameraInc.z * CAMERA_MOVE_SPEED * (interval));
+	
+		
+		if (EngineManager.getInput().isRightMousePressed()) {
+			Vector2f rotVec = EngineManager.getInput().getDisplVec();
+			rotate(rotVec.x * Constants.MOUSE_SENSITIVITY,
+				   rotVec.y * Constants.MOUSE_SENSITIVITY,
+				   0);
+		}
+	}
+	
+	public void translate(float x, float y, float z) {
+		if (z != 0) {
+			position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * z;
+			position.z += (float) Math.cos(Math.toRadians(rotation.y)) * z; 
+		}
+		if (x != 0) {
+			position.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * x;
+			position.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * x; 
+		}
+		
+		position.y += y;
+	}
+	
+	public void setPosition(float x, float y, float z) {
+		this.position.x = x;
+		this.position.y = y;
+		this.position.z = z;
+	}
+	
+	public void setPosition(final Vector3f position) {
+		this.position.x = position.x;
+		this.position.y = position.y;
+		this.position.z = position.z;
+	}
+	
+	public void setRotation(float x, float y, float z) {
+		this.rotation.x = x;
+		this.rotation.y = y;
+		this.rotation.z = z;
+	}
+	
+	public void rotate(float x, float y, float z) {
+		this.rotation.x += x;
+		this.rotation.y += y;
+		this.rotation.z += z;
+	}
+
+	public Vector3f getPosition() {
+		return position;
+	}
+
+	public Vector3f getRotation() {
+		return rotation;
+	}
+
+}
