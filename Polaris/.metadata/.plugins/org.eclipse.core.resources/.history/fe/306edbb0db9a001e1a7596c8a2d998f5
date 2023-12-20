@@ -1,0 +1,29 @@
+package com.polaris.main.input;
+
+import org.lwjgl.glfw.GLFW;
+
+import com.polaris.main.Launcher;
+
+public class InputManager {
+	
+	private static MouseInput mouseInput;
+	
+	public InputManager() {
+		initialize();
+	}
+	
+	private void initialize(){
+		mouseInput = new MouseInput();
+		mouseInput.initialize();
+	}
+	
+	public void update() {
+		mouseInput.getInput();
+	}
+	
+	// KEYPRESS CHECKING
+	public boolean isKeyPressed(int keyCode) {
+		return GLFW.glfwGetKey(Launcher.getWindow().window, keyCode) == GLFW.GLFW_PRESS;
+	}
+
+}

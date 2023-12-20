@@ -1,0 +1,93 @@
+package com.polaris.main.camera;
+
+import com.polaris.main.EngineManager;
+import com.polaris.main.entity.Player;
+
+public class ThirdPersonCamera extends Camera {
+
+	private Player player;
+	
+	private float distanceFromPlayer = 50f;
+	private float angleAroundPlayer = 0;
+	private float pitch = 20;
+	private float yaw = 0;
+	private float roll;
+	
+	public ThirdPersonCamera(Player player) {
+		this.player = player;
+	}
+	
+	public float getPitch() {
+		return pitch;
+	}
+	
+	public float getYaw() {
+		return yaw;
+	}
+	
+	public float getRoll() {
+		return roll;
+	}
+	
+	private void calculateCameraPosition(float horizD, float vertD) {
+		float theta = player.getRotation().y + angleAroundPlayer;
+		float offsetX = (float) (horizD * Math.sin(Math.toRadians(theta)));
+		float offsetZ = (float) (horizD * Math.cos(Math.toRadians(theta)));
+		setPosition(player.getPos().x - offsetX,
+					player.getPos().y + vertD,
+					player.getPos().z - offsetZ);
+	}
+	
+	public void update(float interval) {
+		calculatePitch();
+		calculateAngleAroundPlayer();
+		
+		float horizontalDistance = calculateHorizontalDistance();
+		float verticalDistance = calculateVerticalDistance();
+		calculateCameraPosition(horizontalDistance, verticalDistance);
+		
+		calculateYaw();
+		setRotation(pitch, yaw, roll);
+
+	}
+	
+	private void calculateYaw() {
+		this.yaw = 180 - (player.getRotation().y + angleAroundPlayer);
+	}
+	
+	private float calculateHorizontalDistance() {
+		float hD = (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+		if(hD < 0)
+		   hD = 0;
+		return hD;
+	}
+	
+	private float calculateVerticalDistance() {
+		float vD = (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+		if(vD < 0)
+		   vD = 0;
+		return vD;
+	}
+	
+	private void calculatePitch() {
+		if (EngineManager.getInput().isLeftMousePressed()) {
+			float pitchChange = EngineManager.getInput().getDisplVec().x * 0.1f;
+			pitch += pitchChange;
+			if(pitch < 0)
+			   pitch = 0;
+			else if(pitch > 80)
+			   pitch = 80;
+		}
+	}
+	
+	private void calculateAngleAroundPlayer() {
+		if (EngineManager.getInput().isRightMousePressed()) {
+			float angleChange = EngineManager.getInput().getDisplVec().y * 0.3f;
+			angleAroundPlayer -= angleChange;
+		} else {
+			angleAroundPlayer /= 1.02f;
+			if(angleAroundPlayer >= -0.5f && angleAroundPlayer <= 0.5f)
+				angleAroundPlayer = 0;
+		}
+	}
+}

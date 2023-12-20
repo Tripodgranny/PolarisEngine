@@ -1,0 +1,97 @@
+package com.polaris.main.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.joml.Vector4f;
+
+import com.polaris.main.utils.Constants;
+
+public class Material {
+	
+	private Vector4f ambientColour;
+	private Vector4f diffuseColour;
+	private Vector4f specularColour;
+	
+	private float reflectance;
+	
+	//private TextureAtlas textureAtlas;
+	//private boolean isAtlas = false;
+	
+	public Material() {
+		this.ambientColour = Constants.DEFAULT_COLOUR;
+		this.diffuseColour = Constants.DEFAULT_COLOUR;
+		this.specularColour = Constants.DEFAULT_COLOUR;
+		this.reflectance = 0;
+	}
+	
+	public Material(Vector4f ambientColour, Vector4f diffuseColour, Vector4f specularColour,
+					float reflectance) {
+		this.ambientColour = ambientColour;
+		this.diffuseColour = diffuseColour;
+		this.specularColour = specularColour;
+		this.reflectance = reflectance;
+	}
+	
+//	public Material(TextureAtlas atlas) {
+//		this(Constants.DEFAULT_COLOUR, Constants.DEFAULT_COLOUR, 
+//				Constants.DEFAULT_COLOUR, 0, atlas.getTexture());
+//		//textureAtlas = atlas;
+//		//this.textures = new ArrayList<>();
+//		//textures.add(atlas.getTexture());
+//		//this.isAtlas = true;
+//	}
+
+	public Vector4f getAmbientColour() {
+		return ambientColour;
+	}
+
+	public void setAmbientColour(Vector4f ambientColour) {
+		this.ambientColour = ambientColour;
+	}
+
+	public Vector4f getDiffuseColour() {
+		return diffuseColour;
+	}
+
+	public void setDiffuseColour(Vector4f diffuseColour) {
+		this.diffuseColour = diffuseColour;
+	}
+
+	public Vector4f getSpecularColour() {
+		return specularColour;
+	}
+
+	public void setSpecularColour(Vector4f specularColour) {
+		this.specularColour = specularColour;
+	}
+
+	public float getReflectance() {
+		return reflectance;
+	}
+
+	public void setReflectance(float reflectance) {
+		this.reflectance = reflectance;
+	}
+	
+//	public TextureAtlas getTextureAtlas() {
+//		return textureAtlas;
+//	}
+	/*
+	public float getTextureXOffset() {
+		if (isAtlas) {
+			int col = this.textureAtlas.getTextureIndex()%this.textureAtlas.getNumberOfRows();
+			return (float)col/(float)this.textureAtlas.getNumberOfRows();
+		}
+		return 0;
+	}
+	
+	public float getTextureYOffset() {
+		if (isAtlas) {
+			int row = this.textureAtlas.getTextureIndex()/this.textureAtlas.getNumberOfRows();
+			return (float)row/(float)this.textureAtlas.getNumberOfRows();
+		}
+		return 0;
+	}
+	*/
+}

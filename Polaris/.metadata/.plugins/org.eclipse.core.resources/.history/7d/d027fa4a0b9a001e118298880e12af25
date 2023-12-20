@@ -1,0 +1,285 @@
+package com.polaris.main.rendering.shaders;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
+
+import com.polaris.main.entity.Material;
+import com.polaris.main.lighting.DirectionalLight;
+import com.polaris.main.lighting.PointLight;
+import com.polaris.main.lighting.SpotLight;
+
+public class ShaderManager {
+	private final int programID;
+	private int vertexShaderID, fragmentShaderID;
+	
+	// map of uniforms
+	private final Map<String, Integer> uniforms;
+	
+	public ShaderManager() throws Exception {
+		// create the shader program and set its ID
+		programID = GL20.glCreateProgram();
+		if (programID == 0)
+			throw new Exception("Could not create shader");
+		
+		uniforms = new HashMap<>();
+	}
+	
+	//==================================================================================================================
+	//	Create Uniform Methods																 
+	//==================================================================================================================
+	
+	// CREATE UNIFORM - all other create uniform methods call this method.
+	// puts the data of the uniform in the shader programs uniform location
+	public void createUniform(String uniformName) throws Exception {
+		int uniformLocation = GL20.glGetUniformLocation(programID, uniformName);
+		if (uniformLocation < 0)
+			throw new Exception("Could not find uniform " + uniformName);
+		uniforms.put(uniformName, uniformLocation);
+	}
+	
+	// CREATE DIRECTIONAL LIGHT UNIFORM
+	public void createDirectionalLightUniform(String uniformname) throws Exception {
+		createUniform(uniformname + ".colour");
+		createUniform(uniformname + ".direction");
+		createUniform(uniformname + ".intensity");
+	}
+	
+	// CREATE POINT LIGHT UNIFORM
+	public void createPointLightUniform(String uniformname) throws Exception {
+		createUniform(uniformname + ".colour");
+		createUniform(uniformname + ".position");
+		createUniform(uniformname + ".intensity");
+		createUniform(uniformname + ".constant");
+		createUniform(uniformname + ".linear");
+		createUniform(uniformname + ".exponent");
+	}
+	
+	// CREATE POINT LIGHT LIST UNIFORM
+	public void createPointLightListUniform(String uniformname, int size) throws Exception {
+		for (int i = 0; i < size; i++) {
+			createPointLightUniform(uniformname + "[" + i + "]");
+		}
+	}
+	
+	// CREATE SPOT LIGHT UNIFORM
+	public void createSpotLightUniform(String uniformname) throws Exception {
+		createPointLightUniform(uniformname + ".pl");
+		createUniform(uniformname + ".conedir");
+		createUniform(uniformname + ".cutoff");
+	}
+	
+	// CREATE SPOT LIGHT LIST UNIFORM
+	public void createSpotLightListUniform(String uniformname, int size) throws Exception {
+		for (int i = 0; i < size; i++) {
+			createSpotLightUniform(uniformname + "[" + i + "]");
+		}
+	}
+	
+	// CREATE MATERIAL UNIFORM
+	public void createMaterialUniform(String uniformname) throws Exception {
+		createUniform(uniformname + ".ambient");
+		createUniform(uniformname + ".diffuse");
+		createUniform(uniformname + ".specular");
+		createUniform(uniformname + ".reflectance");
+	}
+	
+	//==================================================================================================================
+	//	Set Uniform Methods																	 
+	//==================================================================================================================
+	/*
+	 * set uniform methods are used to update uniform data in the shader program.
+	 * each method below sets different uniform data types.
+	 * 
+	 * be sure that each uniform is created and set with the correct data type!
+	 */
+	
+	// MATRIX4F UNIFORM
+	public void setUniform(String uniformname, Matrix4f value) {
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			GL20.glUniformMatrix4fv(uniforms.get(uniformname), false,
+									value.get(stack.mallocFloat(16)));
+		}
+	}
+	
+	// VECTOR4F UNIFORM
+	public void setUniform(String uniformname, Vector4f value) {
+		GL20.glUniform4f(uniforms.get(uniformname), value.x, value.y, value.z, value.w);
+	}
+	
+	// VECTOR3F UNIFORM
+	public void setUniform(String uniformname, Vector3f value) {
+		GL20.glUniform3f(uniforms.get(uniformname), value.x, value.y, value.z);
+	}
+	
+	// VECTOR2F UNIFORM
+	public void setUniform(String uniformname, Vector2f value) {
+		GL20.glUniform2f(uniforms.get(uniformname), value.x, value.y);
+	}
+	
+	// INTEGER UNIFORM
+	public void setUniform(String uniformname, int value) {
+		GL20.glUniform1i(uniforms.get(uniformname), value);
+	}
+	
+	// FLOAT UNIFORM
+	public void setUniform(String uniformname, float value) {
+		GL20.glUniform1f(uniforms.get(uniformname), value);
+	}
+	
+	// BOOLEAN UNIFORM
+	public void setUniform(String uniformname, boolean value) {
+		float res = 0;
+		if (value)
+			res = 1;
+		GL20.glUniform1f(uniforms.get(uniformname), res);
+	}
+	
+	// MATERIAL UNIFORM
+	public void setUniform(String uniformname, Material material) {
+		setUniform(uniformname + ".ambient", material.getAmbientColour());
+		setUniform(uniformname + ".diffuse", material.getDiffuseColour());
+		setUniform(uniformname + ".specular", material.getSpecularColour());
+		setUniform(uniformname + ".hasTexture", material.hasTexture() ? 1 : 0);
+		setUniform(uniformname + ".reflectance", material.getReflectance());
+	}
+	
+	// DIRECTIONAL LIGHT UNIFORM
+	public void setUniform(String uniformname, DirectionalLight directionalLight) {
+		setUniform(uniformname + ".colour", directionalLight.getColour());
+		setUniform(uniformname + ".direction", directionalLight.getDirection());
+		setUniform(uniformname + ".intensity", directionalLight.getIntensity());
+	}
+	
+	// POINT LIGHT UNIFORM
+	public void setUniform(String uniformname, PointLight pointLight) {
+		setUniform(uniformname + ".colour", pointLight.getColour());
+		setUniform(uniformname + ".position", pointLight.getPosition());
+		setUniform(uniformname + ".intensity", pointLight.getIntensity());
+		setUniform(uniformname + ".constant", pointLight.getConstant());
+		setUniform(uniformname + ".linear", pointLight.getLinear());
+		setUniform(uniformname + ".exponent", pointLight.getExponent());
+	}
+	
+	// SPOT LIGHT UNIFORM
+	public void setUniform(String uniformname, SpotLight spotLight) {
+		setUniform(uniformname + ".pl", spotLight.getPointLight());
+		setUniform(uniformname + ".conedir", spotLight.getConeDirection());
+		setUniform(uniformname + ".cutoff", spotLight.getCutoff());
+	}
+	
+	// POINT LIGHT LIST UNIFORM
+	public void setUniform(String uniformname, PointLight[] pointLights) {
+		int numLights = pointLights != null ? pointLights.length : 0;
+		for (int i = 0; i < numLights; i++) {
+			setUniform(uniformname, pointLights[i], i);
+		}
+	}
+	
+	// SPOT LIGHT LIST UNIFORM
+	public void setUniform(String uniformname, SpotLight[] spotLights) {
+		int numLights = spotLights != null ? spotLights.length : 0;
+		for (int i = 0; i < numLights; i++) {
+			setUniform(uniformname, spotLights[i], i);
+		}
+	}
+	
+	// POINT LIGHT IN LIST POSITION, UNIFORM
+	public void setUniform(String uniformname, PointLight pointLight, int pos) {
+		setUniform(uniformname + "[" + pos + "]", pointLight);
+	}
+	
+	// SPOT LIGHT IN LIST POSITION, UNIFORM
+	public void setUniform(String uniformname, SpotLight spotLight, int pos) {
+		setUniform(uniformname + "[" + pos + "]", spotLight);
+	}
+	
+	//==================================================================================================================
+	//	Create Shader Methods																 
+	//==================================================================================================================
+	
+	// VERTEX SHADER
+	public void createVertexShader(String shaderCode) throws Exception {
+		vertexShaderID = createShader(shaderCode, GL20.GL_VERTEX_SHADER);
+	}
+	
+	// FRAGMENT SHADER
+	public void createFragmentShader(String shaderCode) throws Exception {
+		fragmentShaderID = createShader(shaderCode, GL20.GL_FRAGMENT_SHADER);
+	}
+
+	// CREATE SHADER, FROM SHADER CODE AND SHADER TYPE - Called from createFragmentShader and createVertexShader
+	private int createShader(String shaderCode, int shaderType) throws Exception {
+		int shaderID = GL20.glCreateShader(shaderType);
+		if (shaderID == 0) 
+			throw new Exception("Error creating shader type : " + shaderType);
+		
+		GL20.glShaderSource(shaderID, shaderCode);
+		GL20.glCompileShader(shaderID);
+		
+		if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == 0)
+			throw new Exception("Error compiling shader code: TYPE: " +
+						shaderType + " Info " + GL20.glGetShaderInfoLog(shaderID, 1024));
+		
+		GL20.glAttachShader(programID, shaderID);
+		
+		return shaderID;
+	}
+	
+	//==================================================================================================================
+	//	Shader Setup Methods
+	//==================================================================================================================
+	/* 
+	 * after a shader is created it must be linked by calling the link method.
+	 * 
+	 * call the bind method before drawing anything using the linked shader, then unbind the shader after drawing.
+	 * 
+  	 * the cleanUp method is used to unbind the shader and delete the shader program. 
+  	 * 
+  	 */ 
+	
+	// LINK SHADER PROGRAM
+	public void link() throws Exception {
+		GL20.glLinkProgram(programID);
+		
+		if (GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS) == 0)
+			throw new Exception("Error linking shader code: TYPE: " + 
+					" Info " + GL20.glGetProgramInfoLog(programID, 1024));
+		
+		if (vertexShaderID != 0)
+			GL20.glDetachShader(programID, vertexShaderID);
+		
+		if (fragmentShaderID != 0)
+			GL20.glDetachShader(programID, fragmentShaderID);
+		
+		GL20.glValidateProgram(programID);
+		if (GL20.glGetProgrami(programID, GL20.GL_VALIDATE_STATUS) == 0)
+			throw new Exception("Unable to validate shader code: " + 
+								GL20.glGetProgramInfoLog(programID, 1024));
+		
+	}
+	
+	// BIND SHADER PROGRAM
+	public void bind() {
+		GL20.glUseProgram(programID);
+	}
+	
+	// UNBIND SHADER PROGRAM
+	public void unbind() {
+		GL20.glUseProgram(0);
+	}
+	
+	// CLEAN UP
+	public void cleanup() {
+		unbind();
+		if (programID != 0) {
+			GL20.glDeleteProgram(programID);
+		}
+	}
+}

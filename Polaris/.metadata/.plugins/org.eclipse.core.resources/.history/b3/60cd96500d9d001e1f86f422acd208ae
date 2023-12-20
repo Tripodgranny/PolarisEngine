@@ -1,0 +1,68 @@
+package com.polaris.main.rendering;
+
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import com.polaris.main.ObjectLoader;
+import com.polaris.main.camera.Camera;
+import com.polaris.main.components.Mesh;
+import com.polaris.main.components.Model;
+import com.polaris.main.gui.GuiContent;
+import com.polaris.main.lighting.DirectionalLight;
+import com.polaris.main.lighting.PointLight;
+import com.polaris.main.lighting.SpotLight;
+
+public class GuiRenderer implements IRenderer2D<Object> {
+	
+	private final Mesh quad;
+	
+	public GuiRenderer(ObjectLoader loader) {
+		float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1 };
+		quad = loader.loadMesh(positions, 2);
+	}
+	
+	@Override
+	public void render(List<GuiContent> guis) {
+		GL30.glBindVertexArray(quad.getId());
+		GL20.glEnableVertexAttribArray(0);
+		for(GuiContent gui : guis) {
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		GL20.glDisableVertexAttribArray(0);
+		GL30.glBindVertexArray(0);
+	}
+
+	@Override
+	public void initialize() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void bind(List<GuiContent> guis) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unbind() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void prepare(Object t, Camera camera) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cleanup() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

@@ -1,0 +1,58 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+import com.polaris.main.EngineManager;
+import com.polaris.main.input.InputManager;
+
+public class Player extends Entity {
+	
+	private static final float RUN_SPEED = 5f;
+	private static final float TURN_SPEED = 2f;
+	
+	private float currentSpeed = 0;
+	private float currentTurnSpeed = 0;
+
+	public Player(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		super(model, pos, rotation, scale);
+	}
+
+	@Override
+	public void update(float interval) {
+		
+		checkInput();
+		rotate(0, currentTurnSpeed * interval, 0);
+		float distance = currentSpeed * interval;
+		
+		// CALCULATE MOVEMENT
+		// sin(theta) X / distance : x = distance * sin(theta)
+		// cos(theta) Z / distance : z = distance * cos(theta)
+		float dx = (float) (distance * Math.sin(Math.toRadians(getRotation().y)));
+		float dz = (float) (distance * Math.cos(Math.toRadians(getRotation().z)));
+		translate(dx, 0, dz);
+	}
+	
+	private void checkInput() {
+		
+		// FORWARD AND BACKWARD MOVEMENT
+		if (EngineManager.getInput().isKeyPressed(InputManager.UP)) {
+			this.currentSpeed = RUN_SPEED;
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.DOWN)) {
+			this.currentSpeed = -RUN_SPEED;
+		}
+		else {
+			this.currentSpeed = 0;
+		}
+		
+		// LEFT AND RIGHT TURNING
+		if (EngineManager.getInput().isKeyPressed(InputManager.LEFT)) {
+			this.currentTurnSpeed = TURN_SPEED;
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.RIGHT)) {
+			this.currentTurnSpeed = -TURN_SPEED;
+		}
+		else {
+			this.currentTurnSpeed = 0;
+		}
+	}
+}

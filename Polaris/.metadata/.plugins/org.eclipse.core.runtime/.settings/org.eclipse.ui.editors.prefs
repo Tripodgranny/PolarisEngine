@@ -1,0 +1,10 @@
+PHPReadOccurrenceIndicationColor=97,97,97
+PHPWriteOccurrenceIndicationColor=148,133,103
+comment_stylePreferences=NONE
+comment_text=false
+eclipse.preferences.version=1
+javaScriptOccurrenceIndicationColor=97,97,97
+org.eclipse.cdt.ui.occurrenceIndicationColor=97,97,97
+printMargin=true
+printMarginColumn=120
+pydevOccurrenceIndicationColor=97,97,97

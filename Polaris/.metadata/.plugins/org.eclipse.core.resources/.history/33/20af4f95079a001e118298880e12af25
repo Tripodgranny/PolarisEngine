@@ -1,0 +1,54 @@
+package com.polaris.main.entity;
+
+public class Model {
+	
+	private Mesh mesh;
+	private Material material;
+	
+	public Model (int id, int vertexCount) {
+		this.mesh = new Mesh(id, vertexCount);
+		this.material = new Material();
+	}
+
+	public Model(int id, int vertexCount, Texture texture) {
+		this.mesh = new Mesh(id, vertexCount);
+		this.material = new Material(texture);
+	}
+	
+	public Model(Mesh mesh, Texture texture) {
+		this.mesh = mesh;
+		this.material = new Material(texture);
+		this.material.setTexture(texture);
+	}
+	
+	public Texture getTexture() {
+		return material.getTexture();
+	}
+	
+	public Material getMaterial() {
+		return material;
+	}
+	
+	public void setMaterial(Material material) {
+		this.material = material;
+		System.out.println("Material set");
+	}
+
+	public void setTexture(Texture texture) {
+		material.setTexture(texture);
+	}
+	
+	public void setTexture(Texture texture, float reflectance) {
+		this.material.setTexture(texture);
+		this.material.setReflectance(reflectance);
+	}
+
+	public int getId() {
+		return mesh.getId();
+	}
+
+	public int getVertexCount() {
+		return mesh.getVertexCount();
+	}
+
+}

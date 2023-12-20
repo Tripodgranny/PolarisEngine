@@ -1,0 +1,28 @@
+package com.polaris.main.terrain;
+
+import com.polaris.main.algorithms.noise.Noise;
+
+public class HeightGenerator {
+	
+	private final float AMPLITUDE;
+	private final float SMOOTHNESS;
+	
+	public HeightGenerator(final float amplitude, final float smoothness) {
+		this.AMPLITUDE  = amplitude;
+		this.SMOOTHNESS = smoothness;
+	}
+	
+	public float generateHeight(int x, int y) {
+		// first noise function
+		float total = Noise.getInterpolatedNoise(x/SMOOTHNESS, y/SMOOTHNESS) * AMPLITUDE * 2;
+		
+		// second more noisy function 
+		total += Noise.getInterpolatedNoise(x/SMOOTHNESS/4f, y/SMOOTHNESS/4f) * AMPLITUDE/2f;
+		// third even noisier function 
+		//total += Noise.getInterpolatedNoise(x/SMOOTHNESS/2f, y/SMOOTHNESS/2f) * AMPLITUDE/2f;
+		// crazy amount of noise
+		//total += Noise.getInterpolatedNoise(x, y) * AMPLITUDE/8f;
+		return total;
+	}
+
+}

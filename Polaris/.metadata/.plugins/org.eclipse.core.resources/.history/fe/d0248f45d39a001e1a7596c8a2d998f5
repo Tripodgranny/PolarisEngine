@@ -1,0 +1,5 @@
+package com.polaris.main.entity;
+
+public class Player {
+
+}

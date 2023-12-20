@@ -1,0 +1,34 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+
+import com.polaris.main.EngineManager;
+import com.polaris.main.Launcher;
+import com.polaris.main.input.InputManager;
+
+public class Player extends Entity {
+	
+	private float movementSpeed = 2.4f;
+
+	public Player(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		super(model, pos, rotation, scale);
+	}
+
+	@Override
+	public void update(float interval) {
+		if (EngineManager.getInput().isKeyPressed(InputManager.LEFT)) {
+			translate(-movementSpeed * interval, 0, 0);
+		}
+		if (EngineManager.getInput().isKeyPressed(InputManager.RIGHT)) {
+			translate(movementSpeed * interval, 0, 0);
+		}
+		if (EngineManager.getInput().isKeyPressed(GLFW.GLFW_KEY_W)) {
+			translate(0, 0, movementSpeed * interval);
+		}
+		if (EngineManager.getInput().isKeyPressed(InputManager.DOWN)) {
+			translate(0, 0, -movementSpeed * interval);
+		}
+	}
+
+}

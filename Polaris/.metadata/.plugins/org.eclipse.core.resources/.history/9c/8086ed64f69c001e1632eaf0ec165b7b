@@ -1,0 +1,64 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+
+import com.polaris.main.components.Model;
+import com.polaris.main.input.MouseInput;
+
+public abstract class Entity {
+	
+	private Model model;
+	private Vector3f pos, rotation;
+	private float scale;
+	
+	public Entity(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		this.model = model;
+		this.pos = pos;
+		this.rotation = rotation;
+		this.scale = scale;
+	}
+	
+	public void translate(float x, float y, float z) {
+		this.pos.x += x;
+		this.pos.y += y;
+		this.pos.z += z;
+	}
+	
+	public void setPosition(float x, float y, float z) {
+		this.pos.x = x;
+		this.pos.y = y;
+		this.pos.z = z;
+	}
+	
+	public void rotate(float x, float y, float z) {
+		this.rotation.x += x;
+		this.rotation.y += y;
+		this.rotation.z += z;
+	}
+	
+	public void setRotation(float x, float y, float z) {
+		this.rotation.x = x;
+		this.rotation.y = y;
+		this.rotation.z = z;
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public Vector3f getPosition() {
+		return pos;
+	}
+
+	public Vector3f getRotation() {
+		return rotation;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+	
+	public abstract void update(float interval);
+	
+
+}

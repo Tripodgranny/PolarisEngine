@@ -1,0 +1,60 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+import com.polaris.main.EngineManager;
+import com.polaris.main.input.InputManager;
+
+public class Player extends Entity {
+	
+	private static final float RUN_SPEED = 5f;
+	private static final float TURN_SPEED = 160f;
+	
+	private float currentSpeed = 0;
+	private float currentTurnSpeed = 0;
+
+	public Player(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		super(model, pos, rotation, scale);
+	}
+
+	@Override
+	public void update(float interval) {
+		if (EngineManager.getInput().isKeyPressed(InputManager.UP)) {
+			translate(0, 0, 1f * interval);
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.DOWN)) {
+			translate(0, 0, -1f * interval);
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.LEFT)) {
+			translate(-1f * interval, 0, 0);
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.RIGHT)) {
+			translate(1f * interval, 0, 0);
+		}
+		
+	}
+	
+	private void checkInput() {
+		
+		// FORWARD AND BACKWARD MOVEMENT
+		if (EngineManager.getInput().isKeyPressed(InputManager.UP)) {
+			this.currentSpeed = RUN_SPEED;
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.DOWN)) {
+			this.currentSpeed = -RUN_SPEED;
+		}
+		else {
+			this.currentSpeed = 0;
+		}
+		
+		// LEFT AND RIGHT TURNING
+		if (EngineManager.getInput().isKeyPressed(InputManager.LEFT)) {
+			this.currentTurnSpeed = TURN_SPEED;
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.RIGHT)) {
+			this.currentTurnSpeed = -TURN_SPEED;
+		}
+		else {
+			this.currentTurnSpeed = 0;
+		}
+	}
+}

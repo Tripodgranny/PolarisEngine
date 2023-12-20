@@ -1,0 +1,134 @@
+package com.polaris.main.rendering;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import com.polaris.main.Launcher;
+import com.polaris.main.ObjectLoader;
+import com.polaris.main.camera.Camera;
+import com.polaris.main.components.Model;
+import com.polaris.main.lighting.DirectionalLight;
+import com.polaris.main.lighting.PointLight;
+import com.polaris.main.lighting.SpotLight;
+import com.polaris.main.rendering.shaders.ShaderManager;
+import com.polaris.main.utils.Transformation;
+import com.polaris.main.utils.Utils;
+
+public class SkyboxRenderer implements IRenderer<Object> { 
+
+	ShaderManager shader;
+	
+	private static final String VERTEX_FILE = "/shaders/skybox_vertex_shader.vs";
+	private static final String FRAGMENT_FILE = "/shaders/skybox_fragment_shader.fs";
+	
+	private static final float SIZE = 1000f;
+	
+	private static String[] TEXTURE_FILES = {"right", "left", "top", "bottom", "back", "front"};
+	
+	private Model model;
+	private int texture;
+	
+	private static final float[] VERTICES = {        
+	    -SIZE,  SIZE, -SIZE,
+	    -SIZE, -SIZE, -SIZE,
+	    SIZE, -SIZE, -SIZE,
+	     SIZE, -SIZE, -SIZE,
+	     SIZE,  SIZE, -SIZE,
+	    -SIZE,  SIZE, -SIZE,
+
+	    -SIZE, -SIZE,  SIZE,
+	    -SIZE, -SIZE, -SIZE,
+	    -SIZE,  SIZE, -SIZE,
+	    -SIZE,  SIZE, -SIZE,
+	    -SIZE,  SIZE,  SIZE,
+	    -SIZE, -SIZE,  SIZE,
+
+	     SIZE, -SIZE, -SIZE,
+	     SIZE, -SIZE,  SIZE,
+	     SIZE,  SIZE,  SIZE,
+	     SIZE,  SIZE,  SIZE,
+	     SIZE,  SIZE, -SIZE,
+	     SIZE, -SIZE, -SIZE,
+
+	    -SIZE, -SIZE,  SIZE,
+	    -SIZE,  SIZE,  SIZE,
+	     SIZE,  SIZE,  SIZE,
+	     SIZE,  SIZE,  SIZE,
+	     SIZE, -SIZE,  SIZE,
+	    -SIZE, -SIZE,  SIZE,
+
+	    -SIZE,  SIZE, -SIZE,
+	     SIZE,  SIZE, -SIZE,
+	     SIZE,  SIZE,  SIZE,
+	     SIZE,  SIZE,  SIZE,
+	    -SIZE,  SIZE,  SIZE,
+	    -SIZE,  SIZE, -SIZE,
+
+	    -SIZE, -SIZE, -SIZE,
+	    -SIZE, -SIZE,  SIZE,
+	     SIZE, -SIZE, -SIZE,
+	     SIZE, -SIZE, -SIZE,
+	    -SIZE, -SIZE,  SIZE,
+	     SIZE, -SIZE,  SIZE
+	};
+	
+	public SkyboxRenderer(ObjectLoader loader, String path) throws Exception {
+		shader = new ShaderManager();
+		model = loader.loadToVAO(VERTICES, 3);
+		texture = loader.loadCubeMap(TEXTURE_FILES, path);
+	}
+	
+	@Override
+	public void initialize() throws Exception {
+		shader.createVertexShader(Utils.loadResource(VERTEX_FILE));
+		shader.createFragmentShader(Utils.loadResource(FRAGMENT_FILE));
+		shader.link();
+		shader.createUniform("projectionMatrix");
+		shader.createUniform("viewMatrix");
+		shader.setUniform("projectionMatrix", Launcher.getWindow().updateProjectionMatrix());
+	}
+
+	@Override
+	public void render(Camera camera, PointLight[] pointLights, SpotLight[] spotLights,
+			DirectionalLight directionLight) {
+		shader.bind();
+		prepare(model, camera);
+		bind(model);
+		unbind();
+		shader.unbind();
+	}
+
+	@Override
+	public void bind(Model model) {
+		//GL11.glDepthMask(GL11.GL_FALSE);
+		GL11.glDepthMask(false);
+		GL30.glBindVertexArray(model.getId());
+		GL20.glEnableVertexAttribArray(0);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture);
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, model.getVertexCount());
+		GL11.glDepthMask(true);
+	}
+
+	@Override
+	public void unbind() {
+		GL20.glDisableVertexAttribArray(0);
+		GL30.glBindVertexArray(0);
+	}
+
+	@Override
+	public void prepare(Object t, Camera camera) {
+		shader.setUniform("projectionMatrix", Launcher.getWindow().updateProjectionMatrix());
+		shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera).m30(0).m31(0).m32(0));
+		
+	}
+
+	@Override
+	public void cleanup() {
+		shader.cleanup();
+
+	}
+
+}

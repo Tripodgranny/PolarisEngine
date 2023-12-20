@@ -1,0 +1,297 @@
+package com.polaris.main.game;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+
+import com.polaris.main.EngineManager;
+import com.polaris.main.Launcher;
+import com.polaris.main.ObjectLoader;
+import com.polaris.main.WindowManager;
+import com.polaris.main.camera.Camera;
+import com.polaris.main.camera.ThirdPersonCamera;
+import com.polaris.main.components.Material;
+import com.polaris.main.components.Model;
+import com.polaris.main.components.Texture;
+import com.polaris.main.components.TextureAtlas;
+import com.polaris.main.entity.Entity;
+import com.polaris.main.entity.Player;
+import com.polaris.main.entity.TestCube;
+import com.polaris.main.gui.GuiTexture;
+import com.polaris.main.input.MouseInput;
+import com.polaris.main.lighting.DirectionalLight;
+import com.polaris.main.lighting.PointLight;
+import com.polaris.main.lighting.SpotLight;
+import com.polaris.main.rendering.GuiRenderer;
+import com.polaris.main.rendering.RenderManager;
+import com.polaris.main.terrain.Terrain;
+import com.polaris.main.utils.Constants;
+import com.polaris.main.utils.Utils;
+
+public class TestGame implements ILogic {
+	
+	// test game testing variables
+	private static final int NUMBER_OF_TEST_ENTITIES = 1000;
+	private static final int RANDOM_ENTITY_SPAWN_RANGE = 100;
+	private static final boolean LOAD_CUBE_ENTITES = true;
+	private static final boolean LOAD_FERN_ENTITES = false;
+	
+	// essential game management components
+	private final WindowManager window;
+	private final RenderManager renderer;
+	
+	// file system loader
+	private final ObjectLoader loader;
+	
+	// entity list
+	private List<Entity> entities;
+	private List<TestCube> testCubes;
+	
+	// terrain list
+	public static List<Terrain> terrains;
+	
+	// camera
+	private ThirdPersonCamera camera;
+	//private Vector3f cameraPosition = new Vector3f(-10f, 24f, -50f);
+
+	private DirectionalLight directionalLight;
+	private PointLight[] pointLights;
+	private SpotLight[] spotLights;
+	private float lightAngle, spotAngle = 0, spotInc = 1;
+	
+	// rotation test
+	float entityRotation;
+	
+	// gui
+	List<GuiTexture> guis = new ArrayList<GuiTexture>();
+	GuiRenderer guiRenderer;
+	
+	public TestGame() {
+		renderer = new RenderManager();
+		window = Launcher.getWindow();
+		loader = new ObjectLoader();
+		//camera = new Camera(cameraPosition);
+		
+		lightAngle = 90;
+	}
+	
+	///////////////////////////////////////////////////////////////////////////////////////////
+	//	Initialize																             //
+	///////////////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public void initialize() throws Exception {
+		// set up renderer
+		renderer.initialize();
+		
+		// set camera start position
+		//camera.setPosition(cameraPosition);
+		// flash light
+		Vector3f flashLightColour = new Vector3f(1, 0.7f, 0.48f);
+		//flashLight = new SpotLight(new PointLight(flashLightColour, cameraPosition,
+		//		  10f, 0, 0, 0.9f), camera.getRotation(),(float) Math.cos(Math.toRadians(190)));
+		
+		//	Test Terrain																							
+		// create terrains list
+		terrains = new ArrayList<>();
+		List<Texture> terrainTextures = new ArrayList<>();
+		
+		// terrain textures
+		Texture t1 = new Texture(loader.loadTexture("textures/DefaultGrass2.png"));	// black
+		Texture t2 = new Texture(loader.loadTexture("textures/GroundDirtWeed.jpg")); 	// r
+		Texture t3 = new Texture(loader.loadTexture("textures/DefaultDirt.png"));	// g
+		Texture t4 =new Texture(loader.loadTexture("textures/DefaultRock.png")); 	// b
+		terrainTextures.add(t1);
+		terrainTextures.add(t2);
+		terrainTextures.add(t3);
+		terrainTextures.add(t4);
+		
+		Vector3f terrainPosition = new Vector3f(0, 0, 0);
+		Texture blendMap = new Texture(loader.loadTexture("blendmaps/DefaultBlendMap2.png"));
+	
+		terrains.add(new Terrain(terrainPosition, loader, terrainTextures, blendMap, 100));
+		//terrains.add(new Terrain(terrainPosition2, loader, terrainTextures, blendMap, 100));
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//	Test Entities																							//
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// create entity list
+		entities = new ArrayList<>();
+		
+		// Player
+		Model playerModel = loader.loadObjModel("/models/DefaultCapsule.obj"); 
+		playerModel.setTexture(new Texture(loader.loadTexture("textures/Blue.png")));
+		Player player = new Player(playerModel, new Vector3f(100,100,100), new Vector3f(0,0,0), 5);
+		entities.add(player);
+		camera = new ThirdPersonCamera(player);
+		
+		// CUBE ENTITY TEST
+		testCubes = new ArrayList<>();
+		if (LOAD_CUBE_ENTITES) {
+			Model cubeModel = loader.loadObjModel("/models/DefaultCube.obj"); 
+			cubeModel.setTexture(new Texture(loader.loadTexture("textures/GrassBlockTexture.png")));
+			
+			Random rnd = new Random();
+			for (int i = 0; i < NUMBER_OF_TEST_ENTITIES; i++) {
+				float x = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				float y = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				float z = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				TestCube cube = new TestCube(cubeModel, new Vector3f(x + Terrain.SIZE / 2, y, z + Terrain.SIZE / 2),
+						new Vector3f(rnd.nextFloat() * 180, rnd.nextFloat() * 180, 0), 3);
+				entities.add(cube);
+				testCubes.add(cube);
+			}
+			entityRotation = rnd.nextFloat() * 360;
+		}
+		
+		// FERN ENTITY TEST
+		if (LOAD_FERN_ENTITES) {
+			Model model = loader.loadObjModel("/models/fern.obj");
+			Texture tex = new Texture(loader.loadTexture("textures/atlases/fern.png"));
+			//Material mat = new Material(new TextureAtlas(tex, 4, 0));
+			//model.setMaterial(mat);
+			
+			for (int i = 0; i < NUMBER_OF_TEST_ENTITIES; i++) {
+				float x = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				float y = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				float z = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				entities.add(new TestCube(model, new Vector3f(x, y, z),
+						new Vector3f(0,0,0), 1));
+			}
+		}
+		
+		
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//	Lights																									//
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		float lightIntensity = 0.8f;
+		Vector3f lightPosition = new Vector3f(0f, 10f, -1f);
+		Vector3f lightColour = new Vector3f(1, 1, 1);
+		// point light
+
+//		PointLight pointLight = new PointLight(lightColour, lightPosition, lightIntensity,
+//				0, 0, 1);+
+		
+		// spot light
+		Vector3f coneDir = new Vector3f(-1,0,-1);
+		float cutoff = (float) Math.cos(Math.toRadians(140));
+		SpotLight spotLight = new SpotLight(new PointLight(lightColour, lightPosition,
+								  lightIntensity, 0, 0, 0.2f), coneDir, cutoff);
+		
+
+		
+		SpotLight spotLight1 = new SpotLight(new PointLight(lightColour, lightPosition,
+								  lightIntensity, 0, 0, 0.2f), coneDir, cutoff);
+		
+		spotLight.getPointLight().setPosition(new Vector3f(1f, 4f, -2f));
+		spotLight1.getPointLight().setPosition(new Vector3f(-1f, 4f, -2f));
+		
+		//directional light
+		Vector3f lightDirection = new Vector3f(69f, 100f, 0);
+		directionalLight = new DirectionalLight(lightColour, lightDirection, lightIntensity);
+		
+		pointLights = new PointLight[0];
+		spotLights = new SpotLight[] {spotLight1, spotLight};
+		
+		// GUI
+		GuiTexture gui = new GuiTexture(loader.loadTexture("gui/test.png"), new Vector2f(0.5f, 0.5f),
+						                new Vector2f(0.25f, 0.25f));
+		guis.add(gui);
+		guiRenderer = new GuiRenderer(loader);
+		
+	}
+
+	@Override
+	public void input() {
+
+
+	}
+
+	@Override
+	public void update(float interval) {
+//		//flash light
+//		flashLightPosition = new Vector3f(camera.getPosition().x - 0.5f,
+//							  			  camera.getPosition().y - 0.5f,
+//							  			  camera.getPosition().z - 1);
+//		
+//		flashLightConeDirection = new Vector3f(camera.getRotation().x,
+//											   camera.getRotation().y,
+//											   camera.getRotation().z);
+//		
+//		flashLight.getPointLight().setPosition(flashLightPosition);
+//		flashLight.setConeDirection(flashLightConeDirection);
+		
+		// directional light
+		spotAngle += spotInc * 0.5f * interval;
+		if (spotAngle > 4)
+			spotInc = -1;
+		else if (spotAngle <= -4)
+			spotInc = 1;
+		
+		double spotAngleRad = Math.toRadians(spotAngle);
+		Vector3f coneDir = spotLights[1].getPointLight().getPosition();
+		coneDir.y = (float) Math.sin(spotAngleRad);
+		
+		double spotAngleRad2 = Math.toRadians(spotAngle);
+		Vector3f coneDir2 = spotLights[0].getPointLight().getPosition();
+		coneDir2.y = (float) Math.sin(spotAngleRad2);
+		
+		System.out.println("Spot Angle: " + spotAngle + " | " + "Light Angle: " + lightAngle);
+		lightAngle += 0.25f * interval;
+		if (lightAngle > 90) {
+			directionalLight.setIntensity(0);
+			if (lightAngle >= 360)
+				lightAngle = -90;
+		} else if (lightAngle <= -80 || lightAngle >= 80) {
+			float factor = 1 - (Math.abs(lightAngle) - 80) / 10.0f;
+			directionalLight.setIntensity(factor);
+			directionalLight.getColour().y = Math.max(factor, 0.9f);
+			directionalLight.getColour().z = Math.max(factor, 0.5f);
+		} else {
+			directionalLight.setIntensity(1);
+			directionalLight.getColour().x = 1;
+			directionalLight.getColour().y = 1;
+			directionalLight.getColour().z = 1;
+		}
+		double angRad = Math.toRadians(lightAngle);
+		directionalLight.getDirection().x = (float) Math.sin(angRad);
+		directionalLight.getDirection().y = (float) Math.cos(angRad);
+		
+		//Debugger.showInfo(directionalLight);
+		
+//		entityRotation = 0.1f;
+//		testCubes.forEach(testCube -> testCube.translate(.01f, (float) 0, 0));
+//		entities.forEach(entity -> entity.rotate(entityRotation, (float) 0, entityRotation));
+		//camera.update();
+		// process entities for the renderer
+		
+		camera.update(interval);
+		
+		for(Entity entity : entities) {
+			entity.update(interval);
+			renderer.processEntity(entity);
+		}
+		
+		for (Terrain terrain : terrains) {
+			renderer.processTerrain(terrain);
+		}
+	}
+
+	@Override
+	public void render() {
+		renderer.render(camera, directionalLight, pointLights, spotLights);
+		// guiRenderer.render(guis);
+	}
+
+	@Override
+	public void cleanUp() {
+		renderer.cleanup();
+		loader.cleanup();
+	}
+
+}

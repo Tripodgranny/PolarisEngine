@@ -1,0 +1,38 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+
+import com.polaris.main.components.Model;
+import com.polaris.main.components.Transform;
+import com.polaris.main.input.MouseInput;
+
+public abstract class Entity {
+	
+	private Model model;
+	private Transform transform;
+	
+	public Entity(Model model, Vector3f position, Vector3f rotation, float scale) {
+		this.model = model;
+		this.transform = new Transform(position, rotation, scale);
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public Vector3f getPosition() {
+		return transform.position;
+	}
+
+	public Vector3f getRotation() {
+		return transform.rotation;
+	}
+
+	public Vector3f getScale() {
+		return transform.scale;
+	}
+	
+	public abstract void update(float interval);
+	
+
+}

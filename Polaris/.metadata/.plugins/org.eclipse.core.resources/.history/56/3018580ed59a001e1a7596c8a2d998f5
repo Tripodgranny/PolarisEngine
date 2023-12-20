@@ -1,0 +1,16 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+
+public class TestCube extends Entity {
+
+	public TestCube(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		super(model, pos, rotation, scale);
+	}
+
+	@Override
+	void update(float interval) {
+		
+	}
+
+}

@@ -1,0 +1,41 @@
+package com.polaris.main.entity;
+
+import com.polaris.main.components.Texture;
+
+public class TextureAtlas {
+
+	private Texture texture;
+	private int textureIndex;
+	private int numberOfRows;
+	
+	public TextureAtlas(Texture texture, int rows, int index) {
+		this.texture = texture;
+		this.textureIndex = index;
+		this.numberOfRows = rows;
+	}
+	
+	public Texture getTexture() {
+		return texture;
+	}
+	
+	public int getNumberOfRows() {
+		return numberOfRows;
+	}
+	
+	public int getTextureIndex() {
+		return textureIndex;
+	}
+	
+	public void setTexture(Texture texture) {
+		this.texture = texture;
+	}
+	
+	public void setNumberOfRows(int rows) {
+		this.numberOfRows = rows;
+	}
+	
+	public void setAtlasIndex(int index) {
+		this.textureIndex = index;
+	}
+	
+}

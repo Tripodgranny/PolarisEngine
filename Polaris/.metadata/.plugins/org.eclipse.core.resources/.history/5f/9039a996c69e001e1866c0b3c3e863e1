@@ -1,0 +1,166 @@
+package com.polaris.main.game;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
+
+import com.polaris.main.EngineManager;
+import com.polaris.main.Launcher;
+import com.polaris.main.ObjectLoader;
+import com.polaris.main.WindowManager;
+import com.polaris.main.camera.Camera;
+import com.polaris.main.camera.ThirdPersonCamera;
+import com.polaris.main.components.Material;
+import com.polaris.main.components.Model;
+import com.polaris.main.components.Texture;
+import com.polaris.main.components.TextureAtlas;
+import com.polaris.main.entity.Entity;
+import com.polaris.main.entity.Player;
+import com.polaris.main.entity.TestCube;
+import com.polaris.main.gui.GuiContent;
+import com.polaris.main.input.MouseInput;
+import com.polaris.main.lighting.DirectionalLight;
+import com.polaris.main.lighting.PointLight;
+import com.polaris.main.lighting.SpotLight;
+import com.polaris.main.rendering.GuiRenderer;
+import com.polaris.main.rendering.RenderManager;
+import com.polaris.main.terrain.Terrain;
+import com.polaris.main.utils.Constants;
+import com.polaris.main.utils.Utils;
+
+public class TestGame implements ILogic {
+	
+	// test game testing variables
+	private static final int NUMBER_OF_TEST_ENTITIES = 1000;
+	private static final int RANDOM_ENTITY_SPAWN_RANGE = 100;
+	private static final boolean LOAD_CUBE_ENTITES = true;
+	
+	private final RenderManager renderer;
+	
+	// file system loader
+	private final ObjectLoader loader;
+	
+	private List<Entity> entities;
+	private List<TestCube> testCubes;
+	public static List<Terrain> terrains;
+	List<GuiContent> guis;
+	
+	// LIGHTS
+	private DirectionalLight directionalLight;
+	private PointLight[] pointLights;
+	private SpotLight[] spotLights;
+	
+	// CAMERA
+	private ThirdPersonCamera camera;
+
+	// ACTION
+	
+	public TestGame() {
+		renderer = new RenderManager();
+		loader = new ObjectLoader();
+	}
+	
+	@Override
+	public void initialize() throws Exception {
+		renderer.initialize();
+		
+		//	Test Terrain																							
+		terrains = new ArrayList<>();
+		List<Texture> terrainTextures = new ArrayList<>();
+		
+		Texture t1 = new Texture(loader.loadTexture("textures/DefaultGrass2.png"));	// black
+		Texture t2 = new Texture(loader.loadTexture("textures/GroundDirtWeed.jpg")); 	// r
+		Texture t3 = new Texture(loader.loadTexture("textures/DefaultDirt.png"));	// g
+		Texture t4 =new Texture(loader.loadTexture("textures/DefaultRock.png")); 	// b
+		terrainTextures.add(t1);
+		terrainTextures.add(t2);
+		terrainTextures.add(t3);
+		terrainTextures.add(t4);
+		Vector3f terrainPosition = new Vector3f(0, 0, 0);
+		Texture blendMap = new Texture(loader.loadTexture("blendmaps/DefaultBlendMap2.png"));
+		terrains.add(new Terrain(terrainPosition, loader, terrainTextures, blendMap, 100));
+		
+		entities = new ArrayList<>();
+		
+		// PLAYER
+		Model playerModel = loader.loadOBJModel("/models/DefaultCapsule.obj"); 
+		playerModel.setTexture(new Texture(loader.loadTexture("textures/Blue.png")));
+		Player player = new Player(playerModel, new Vector3f(100,100,100), new Vector3f(0,0,0), new Vector3f(5f, 5f, 5f));
+		entities.add(player);
+		camera = new ThirdPersonCamera(player);
+		
+		// TEST CUBES
+		testCubes = new ArrayList<>();
+		if (LOAD_CUBE_ENTITES) {
+			Model cubeModel = loader.loadOBJModel("/models/DefaultCube.obj"); 
+			cubeModel.setTexture(new Texture(loader.loadTexture("textures/GrassBlockTexture.png")));
+			
+			Random rnd = new Random();
+			for (int i = 0; i < NUMBER_OF_TEST_ENTITIES; i++) {
+				float x = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				float y = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				float z = Utils.randomFloat(RANDOM_ENTITY_SPAWN_RANGE);
+				TestCube cube = new TestCube(cubeModel, new Vector3f(x + Terrain.SIZE / 2, y, z + Terrain.SIZE / 2),
+						new Vector3f(rnd.nextFloat() * 180, rnd.nextFloat() * 180, 0), new Vector3f(5f, 5f, 5f));
+				entities.add(cube);
+				testCubes.add(cube);
+			}
+		}
+		
+		// DIRECTIONAL LIGHT
+		float lightIntensity = 0.8f;
+		Vector3f lightDirection = new Vector3f(69f, 100f, 0);
+		Vector3f lightColor = new Vector3f(1, 1, 1);
+
+		directionalLight = new DirectionalLight(lightColor, lightDirection, lightIntensity);
+		pointLights = new PointLight[0];
+		spotLights = new SpotLight[0];
+		
+		// GUI
+		guis = new ArrayList<GuiContent>();
+		
+		GuiContent gui = new GuiContent(loader.loadTexture("gui/test_gui.png"), new Vector2f(-0.7f, 0.85f),
+						                new Vector2f(0.3f, 0.2f));
+		guis.add(gui);
+		
+	}
+
+	@Override
+	public void input() {
+		// Unused until the test functionality is worked out and the project becomes bigger.
+		// Window inputs are just callbacks defined and declared at start up in the WindowManager class.
+		// All other input is handled by the InputManager and used by the classes themselves. See Player class.
+	}
+
+	@Override
+	public void update(float interval) {
+		camera.update(interval);
+		
+		for(Entity entity : entities) {
+			entity.update(interval);
+			renderer.processEntity(entity);
+		}
+		
+		for (Terrain terrain : terrains) {
+			renderer.processTerrain(terrain);
+		}
+		
+		renderer.renderGUIContent(guis);
+	}
+
+	@Override
+	public void render() {
+		renderer.render(camera, directionalLight, pointLights, spotLights);
+	}
+
+	@Override
+	public void cleanUp() {
+		renderer.cleanup();
+		loader.cleanup();
+	}
+
+}

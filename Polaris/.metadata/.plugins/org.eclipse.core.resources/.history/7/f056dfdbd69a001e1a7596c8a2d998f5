@@ -1,0 +1,16 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+
+public class Player extends Entity {
+
+	public Player(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		super(model, pos, rotation, scale);
+	}
+
+	@Override
+	public void update(float interval) {
+		
+	}
+
+}

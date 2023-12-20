@@ -1,0 +1,20 @@
+package com.polaris.main.game;
+
+import com.polaris.main.input.MouseInput;
+
+/*
+ * This interface should be implemented by game logic classes.
+ */
+public interface ILogic {
+	
+	void initialize() throws Exception;
+	
+	void input();
+	
+	void update(float interval, MouseInput mouseInput);
+	
+	void render();
+	
+	void cleanUp();
+
+}

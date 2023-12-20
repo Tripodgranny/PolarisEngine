@@ -1,0 +1,32 @@
+package com.polaris.main.rendering;
+
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import com.polaris.main.ObjectLoader;
+import com.polaris.main.components.Model;
+import com.polaris.main.gui.GuiContent;
+
+public class GuiRenderer {
+	
+	private final Model quad;
+	
+	public GuiRenderer(ObjectLoader loader) {
+		float[] positions = {-1, 1, -1, -1, 1, 1, 1, -1 };
+		quad = loader.loadMesh(positions, 2);
+	}
+	
+	public void render(List<GuiContent> guis) {
+		GL30.glBindVertexArray(quad.getId());
+		GL20.glEnableVertexAttribArray(0);
+		for(GuiContent gui : guis) {
+			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
+		}
+		GL20.glDisableVertexAttribArray(0);
+		GL30.glBindVertexArray(0);
+	}
+
+}

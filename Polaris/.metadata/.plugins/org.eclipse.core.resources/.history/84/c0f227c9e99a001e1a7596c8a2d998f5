@@ -1,0 +1,81 @@
+package com.polaris.main.entity;
+
+import org.joml.Vector3f;
+import com.polaris.main.EngineManager;
+import com.polaris.main.input.InputManager;
+
+public class Player extends Entity {
+	
+	private static final float RUN_SPEED = 5f;
+	private static final float TURN_SPEED = 16f;
+	private static final float GRAVITY = -30f;
+	private static final float JUMP_POWER = 20f;
+	
+	private static final float TERRAIN_HEIGHT = 0;
+	
+	private float currentSpeed = 0;
+	private float currentTurnSpeed = 0;
+	private float upwardSpeed = 0;
+	
+	private boolean isInAir = false;
+
+	public Player(Model model, Vector3f pos, Vector3f rotation, float scale) {
+		super(model, pos, rotation, scale);
+	}
+
+	@Override
+	public void update(float interval) {
+		
+		checkInput();
+		rotate(0, currentTurnSpeed * interval, 0);
+		float distance = currentSpeed * interval;
+		
+		// CALCULATE MOVEMENT
+		// sin(theta) X / distance : x = distance * sin(theta)
+		// cos(theta) Z / distance : z = distance * cos(theta)
+		float dx = (float) (distance * Math.sin(Math.toRadians(getRotation().y)));
+		float dz = (float) (distance * Math.cos(Math.toRadians(getRotation().y)));
+		
+		upwardSpeed += GRAVITY * interval;
+		float dy = upwardSpeed * interval;
+		translate(dx, dy, dz);
+		
+		if (getPos().y<TERRAIN_HEIGHT) {
+			upwardSpeed = 0;
+			getPos().y = TERRAIN_HEIGHT;
+		}
+	}
+	
+	private void jump() {
+		upwardSpeed = JUMP_POWER;
+	}
+	
+	private void checkInput() {
+		
+		// FORWARD AND BACKWARD MOVEMENT
+		if (EngineManager.getInput().isKeyPressed(InputManager.UP)) {
+			this.currentSpeed = RUN_SPEED;
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.DOWN)) {
+			this.currentSpeed = -RUN_SPEED;
+		}
+		else {
+			this.currentSpeed = 0;
+		}
+		
+		// LEFT AND RIGHT TURNING
+		if (EngineManager.getInput().isKeyPressed(InputManager.LEFT)) {
+			this.currentTurnSpeed = TURN_SPEED;
+		}
+		else if (EngineManager.getInput().isKeyPressed(InputManager.RIGHT)) {
+			this.currentTurnSpeed = -TURN_SPEED;
+		}
+		else {
+			this.currentTurnSpeed = 0;
+		}
+		
+		if (EngineManager.getInput().isKeyPressed(InputManager.JUMP)) {
+			jump();
+		}
+	}
+}

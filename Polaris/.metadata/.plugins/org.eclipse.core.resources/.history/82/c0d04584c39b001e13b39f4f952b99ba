@@ -1,0 +1,146 @@
+package com.polaris.main.camera;
+
+import com.polaris.main.EngineManager;
+import com.polaris.main.entity.Entity;
+
+/*
+ * ThirdPersonCamera class extends Camera
+ * 
+ * Used to view an entity from behind.
+ * 
+ * In the future, its possible that this class should
+ * accept a sub-class of entity instead of entity
+ * itself. As of now, any entity in the world could have
+ * this camera for testing purposes.
+ * 
+ */
+public class ThirdPersonCamera extends Camera {
+	
+	private final float DEFAULT_PITCH = 40f;
+	private final float MINIMUM_PITCH = 0f;
+	private final float MAXIMUM_PITCH = 90f;
+
+	private Entity entity;
+	
+	private float distanceFromPlayer = 100f;
+	private float angleAroundPlayer = 0;
+	private float pitch = DEFAULT_PITCH;
+	private float yaw = 0;
+	private float roll;
+	
+	public ThirdPersonCamera(Entity entity) {
+		this.entity = entity;
+	}
+	
+	//==================================================================================================================
+	//	Getter Methods																 
+	//==================================================================================================================
+	
+	public float getPitch() {
+		return pitch;
+	}
+	
+	public float getYaw() {
+		return yaw;
+	}
+	
+	public float getRoll() {
+		return roll;
+	}
+	
+	//==================================================================================================================
+	//	Update Method - This method needs to be called from the games update method.																 
+	//==================================================================================================================
+	
+	public void update(float interval) {
+		calculatePitch();
+		calculateAngleAroundPlayer();
+		
+		float horizontalDistance = calculateHorizontalDistance();
+		float verticalDistance = calculateVerticalDistance();
+		calculateCameraPosition(horizontalDistance, verticalDistance);
+		
+		calculateYaw();
+		setRotation(pitch, yaw, roll);
+
+	}
+	
+	//==================================================================================================================
+	//	Position Calculation Methods																 
+	//==================================================================================================================
+	
+	// CALCULATE CAMERA POSITION BASED ON HORIZONTAL AND VERTICAL DISTANCES
+	private void calculateCameraPosition(float horizD, float vertD) {
+		float theta = entity.getRotation().y + angleAroundPlayer;
+		float offsetX = (float) (horizD * Math.sin(Math.toRadians(theta)));
+		float offsetZ = (float) (horizD * Math.cos(Math.toRadians(theta)));
+		setPosition(entity.getPos().x - offsetX,
+					entity.getPos().y + vertD,
+					entity.getPos().z - offsetZ);
+	}
+	
+	// HORIZONTAL DISTANCE FROM PLAYER
+	private float calculateHorizontalDistance() {
+		float hD = (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));
+		if(hD < 0)
+		   hD = 0;
+		return hD;
+	}
+	
+	// VERTICAL DISTANCE FROM PLAYER
+	private float calculateVerticalDistance() {
+		float vD = (float) (distanceFromPlayer * Math.sin(Math.toRadians(pitch)));
+		if(vD < 0)
+		   vD = 0;
+		return vD;
+	}
+	
+	//==================================================================================================================
+	//	Rotation Calculation Methods																 
+	//==================================================================================================================
+	
+	// YAW
+	private void calculateYaw() {
+		this.yaw = 180 - (entity.getRotation().y + angleAroundPlayer);
+	}
+	
+	// PITCH
+	private void calculatePitch() {
+		// MOVE CAMERA AROUND PLAYER IF RIGHT MOUSE BUTTON IS PRESSED
+		if (EngineManager.getInput().isRightMousePressed()) {
+			float pitchChange = EngineManager.getInput().getDisplVec().x * 0.1f;
+			pitch += pitchChange;
+			
+			// BOUND PITCH BETWEEN MIN AND MAX
+			if(pitch < MINIMUM_PITCH)
+			   pitch = MINIMUM_PITCH;
+			else if(pitch > MAXIMUM_PITCH)
+			   pitch = MAXIMUM_PITCH;
+			
+		} else {
+			
+			// RIGHT MOUSE BUTTON RELEASED, SET PITCH BACK TO DEFAULT SMOOTHLY
+			if (pitch < DEFAULT_PITCH - 0.5f) {
+				pitch += 1f;
+			} else if (pitch > DEFAULT_PITCH + 0.5f) {
+				pitch -= 1f;
+			}
+			else 
+				pitch = DEFAULT_PITCH;
+		}
+	}
+	
+	// ANGLE AROUND PLAYER
+	private void calculateAngleAroundPlayer() {
+		// MOVE CAMERA AROUND PLAYER IF RIGHT MOUSE BUTTON IS PRESSED
+		if (EngineManager.getInput().isRightMousePressed()) {
+			float angleChange = EngineManager.getInput().getDisplVec().y * 0.3f;
+			angleAroundPlayer -= angleChange;
+		} else {
+			// RIGHT MOUSE BUTTON RELEASED, SET angleAroundPlayer SMOOTHLY
+			angleAroundPlayer /= 1.04f;
+			if(angleAroundPlayer >= -0.5f && angleAroundPlayer <= 0.5f)
+				angleAroundPlayer = 0;
+		}
+	}
+}
